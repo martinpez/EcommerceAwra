@@ -194,3 +194,4 @@ src/main/java/com/awra/co/ecommerceawra/
 - Cuando el frontend necesite algo nuevo, el contrato (método, ruta, request,
   response) se entrega como respuesta, no se edita el frontend desde aquí.
 # EcommerceAwra
+# EcommerceAwra
