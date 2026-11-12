@@ -1,0 +1,12 @@
+<section class="about-section" appReveal aria-labelledby="about-title">
+  <div class="about-section__mark" aria-hidden="true">✦</div>
+  <div class="about-section__content">
+    <p class="about-section__eyebrow" data-reveal>
+      {{ section()?.eyebrow ?? brand.origin }}
+    </p>
+    <h2 id="about-title">
+      <app-letter-title [text]="section()?.titulo ?? brand.about.title" variante="escalera" />
+    </h2>
+    <p data-reveal>{{ section()?.cuerpo ?? brand.about.description }}</p>
+  </div>
+</section>

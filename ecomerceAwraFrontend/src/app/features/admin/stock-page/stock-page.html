@@ -1,0 +1,195 @@
+<section class="panel">
+  <header class="panel__header">
+    <div>
+      <h1 class="panel__title">Inventario</h1>
+      <p class="panel__hint">
+        El stock no se edita: se registra. Cada entrada, venta o ajuste queda en el historial, y
+        cuando el stock cruza el mínimo se genera una alerta.
+      </p>
+    </div>
+  </header>
+
+  <app-panel-mensaje [error]="error()" [aviso]="aviso()" />
+
+  <div class="caja">
+    <h2 class="caja__title">
+      Alertas de stock
+      @if (alertasSinLeer() > 0) {
+        <span class="insignia insignia--alerta">{{ alertasSinLeer() }} sin leer</span>
+      }
+    </h2>
+
+    @if (alertas.hasValue() && alertas.value()!.length > 0) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Talla</th>
+            <th>SKU</th>
+            <th>Tipo</th>
+            <th>Stock</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (alerta of alertas.value()!; track alerta.id) {
+            <tr [class.es-leida]="alerta.leida">
+              <td>{{ alerta.productoNombre }}</td>
+              <td>{{ alerta.talla }}</td>
+              <td>{{ alerta.sku }}</td>
+              <td>
+                <span class="insignia" [class.insignia--agotado]="alerta.tipo === 'AGOTADO'">
+                  {{ alerta.tipo === 'AGOTADO' ? 'Agotado' : 'Stock bajo' }}
+                </span>
+              </td>
+              <td>{{ alerta.stockAlMomento }}</td>
+              <td>
+                @if (!alerta.leida) {
+                  <button type="button" class="boton boton--mini" (click)="marcarLeida(alerta.id)">
+                    Marcar leída
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <p class="tabla__vacia">No hay alertas de stock.</p>
+    }
+  </div>
+
+  <div class="caja">
+    <h2 class="caja__title">Stock por producto</h2>
+
+    <label class="campo">
+      <span class="campo__etiqueta">Producto</span>
+      <select [value]="productoId() ?? ''" (change)="elegirProducto($any($event.target).value)">
+        <option value="">Elige un producto</option>
+        @for (item of inventario.value()?.content ?? []; track item.productoId) {
+          <option [value]="item.productoId">
+            {{ item.nombre }} — {{ item.stockTotal }} unidades
+          </option>
+        }
+      </select>
+    </label>
+
+    @if (producto.hasValue() && producto.value(); as productoActual) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Talla</th>
+            <th>Color</th>
+            <th>SKU</th>
+            <th>Stock</th>
+            <th>Mínimo</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (variante of productoActual.variantes; track variante.id) {
+            <tr>
+              <td>{{ variante.talla }}</td>
+              <td>{{ variante.color }}</td>
+              <td>{{ variante.sku }}</td>
+              <td>{{ variante.stock }}</td>
+              <td>{{ variante.stockMinimo }}</td>
+              <td>
+                @if (variante.stock === 0) {
+                  <span class="insignia insignia--agotado">Sin stock</span>
+                } @else if (variante.stock <= variante.stockMinimo) {
+                  <span class="insignia insignia--borrador">Stock bajo</span>
+                } @else {
+                  <span class="insignia insignia--publicado">Correcto</span>
+                }
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="boton boton--mini"
+                  (click)="abrirVariante(variante.id)"
+                >
+                  Movimientos
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else if (productoId() === null) {
+      <p class="tabla__vacia">Elige un producto para ver sus tallas.</p>
+    }
+  </div>
+
+  @if (varianteAbierta() !== null) {
+    <div class="caja">
+      <h2 class="caja__title">Registrar movimiento</h2>
+
+      <form class="formulario" (ngSubmit)="registrarMovimiento(varianteAbierta()!)">
+        <label class="campo">
+          <span class="campo__etiqueta">Tipo</span>
+          <select
+            [value]="tipoMovimiento()"
+            (change)="tipoMovimiento.set($any($event.target).value)"
+          >
+            <option value="ENTRADA">Entrada</option>
+            <option value="VENTA">Venta</option>
+            <option value="AJUSTE">Ajuste</option>
+          </select>
+        </label>
+
+        <label class="campo">
+          <span class="campo__etiqueta">Cantidad</span>
+          <input
+            type="number"
+            [value]="cantidad()"
+            (input)="cantidad.set(+$any($event.target).value)"
+          />
+        </label>
+
+        <label class="campo">
+          <span class="campo__etiqueta">Motivo</span>
+          <input
+            type="text"
+            placeholder="Por ejemplo: proveedor, venta en la calle…"
+            [value]="motivo()"
+            (input)="motivo.set($any($event.target).value)"
+          />
+        </label>
+
+        <div class="formulario__acciones">
+          <button type="submit" class="boton boton--principal">Registrar</button>
+          <button type="button" class="boton" (click)="cerrarVariante()">Cerrar</button>
+        </div>
+      </form>
+
+      @if (movimientos.hasValue() && movimientos.value()!.length > 0) {
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Stock resultante</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (movimiento of movimientos.value()!; track movimiento.id) {
+              <tr>
+                <td>{{ movimiento.fechaMovimiento | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ movimiento.tipo }}</td>
+                <td>{{ movimiento.cantidad }}</td>
+                <td>{{ movimiento.stockResultante }}</td>
+                <td>{{ movimiento.motivo ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="tabla__vacia">Esta variante todavía no tiene movimientos.</p>
+      }
+    </div>
+  }
+</section>

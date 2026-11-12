@@ -1,0 +1,480 @@
+.product-page {
+  display: grid;
+  gap: var(--space-8);
+  width: min(100% - (var(--page-gutter) * 2), var(--content-width));
+  min-height: 100dvh;
+  align-content: start;
+  margin: 0 auto;
+  padding: var(--space-6) 0 var(--space-12);
+}
+
+.product-page__back {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  width: max-content;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+/* Barra que crece al pasar el mouse, como la de "Ver más detalles". */
+.product-page__back::after {
+  position: absolute;
+  right: 0;
+  bottom: -0.3rem;
+  left: 0;
+  height: 1px;
+  background: var(--color-metal);
+  content: '';
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms var(--ease-awra);
+}
+
+.product-page__back:hover::after,
+.product-page__back:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.product-page__back:hover,
+.product-page__back:focus-visible {
+  color: var(--color-text);
+}
+
+.product-page__detail {
+  display: grid;
+  grid-template-columns: minmax(24rem, 1fr) minmax(20rem, 0.75fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.product-page__media {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.product-page__photo-wrap {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  cursor: pointer;
+  transition: transform 400ms var(--ease-awra);
+}
+
+.product-page__photo-wrap::before {
+  position: absolute;
+  z-index: 2;
+  inset: -1.5rem;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--color-metal) 18%, transparent) 0%,
+    transparent 65%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+  content: '';
+}
+
+.product-page__photo-wrap:hover {
+  transform: scale(1.02);
+}
+
+.product-page__photo-wrap:hover::before {
+  opacity: 1;
+}
+
+.product-page__photo-wrap:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 0.375rem;
+}
+
+.product-page__photo-wrap .product-page__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Capas de la foto. La opacidad la controla el componente, así el cambio de
+ * vista es un crossfade real y no un salto de imagen.
+ */
+.product-page__photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--color-surface);
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.product-page__photo.is-visible {
+  opacity: 1;
+}
+
+.product-page__thumbs {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.product-page__thumb {
+  display: block;
+  width: clamp(4rem, 8vw, 6rem);
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 30%, transparent);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: border-color 180ms ease;
+}
+
+.product-page__thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.product-page__thumb:hover,
+.product-page__thumb:focus-visible,
+.product-page__thumb.is-active {
+  border-color: var(--color-metal);
+}
+
+.product-page__thumb:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 0.25rem;
+}
+
+.product-page__info {
+  display: grid;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+}
+
+.product-page__eyebrow {
+  margin: 0;
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+.product-page__detail h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 5vw, 6rem);
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.product-page__price {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1.25rem;
+}
+
+.product-page__badge {
+  width: max-content;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 50%, transparent);
+  color: var(--color-text-muted);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.product-page__badge.is-out {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.product-page__description {
+  max-width: 42ch;
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.product-page__sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.product-page__size {
+  min-width: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 40%, transparent);
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.product-page__size:hover:not(:disabled),
+.product-page__size:focus-visible {
+  border-color: var(--color-metal);
+}
+
+.product-page__size.is-selected {
+  border-color: var(--color-metal);
+  background: color-mix(in srgb, var(--color-metal) 15%, transparent);
+}
+
+.product-page__size:disabled {
+  border-style: dashed;
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.product-page__cta {
+  display: inline-flex;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-metal);
+  background: var(--color-text);
+  color: var(--color-bg);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.product-page__cta:hover:not([aria-disabled='true']),
+.product-page__cta:focus-visible {
+  opacity: 0.85;
+}
+
+.product-page__cta[aria-disabled='true'] {
+  border-color: color-mix(in srgb, var(--color-metal) 40%, transparent);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.product-page__empty {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: start;
+  padding: var(--space-12) 0;
+}
+
+/* 7E: acordeón de detalles */
+.product-page__accordions {
+  display: grid;
+  margin-top: var(--space-2);
+  border-top: var(--border-thin);
+}
+
+.product-page__accordion {
+  border-bottom: var(--border-thin);
+}
+
+.product-page__accordion-heading {
+  margin: 0;
+  font: inherit;
+}
+
+.product-page__accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  letter-spacing: 0.25em;
+  text-align: left;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.product-page__accordion-trigger:hover,
+.product-page__accordion-trigger:focus-visible {
+  color: var(--color-metal);
+}
+
+.product-page__accordion-trigger:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 0.25rem;
+}
+
+.product-page__accordion-mark {
+  position: relative;
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.product-page__accordion-mark::before,
+.product-page__accordion-mark::after {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: translateY(-50%);
+  content: '';
+}
+
+.product-page__accordion-mark::after {
+  transform: translateY(-50%) rotate(90deg);
+  transition: transform 300ms var(--ease-awra);
+}
+
+.product-page__accordion.is-open .product-page__accordion-mark::after {
+  transform: translateY(-50%) rotate(0deg);
+}
+
+/*
+ * `grid-template-rows: 0fr → 1fr` anima la altura sin conocer el contenido,
+ * a diferencia de `max-height`, que necesita un valor estimado.
+ */
+.product-page__accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 320ms var(--ease-awra),
+    visibility 320ms var(--ease-awra);
+}
+
+.product-page__accordion.is-open .product-page__accordion-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+.product-page__accordion-body {
+  overflow: hidden;
+}
+
+.product-page__accordion-body p {
+  max-width: 42ch;
+  margin: 0;
+  padding-bottom: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.product-page__empty p {
+  color: var(--color-text-muted);
+}
+
+.product-page__empty a {
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-metal);
+  padding-bottom: var(--space-1);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.product-page__other {
+  padding-top: var(--space-8);
+  border-top: var(--border-thin);
+}
+
+.product-page__other-eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+.product-page__other h2 {
+  margin: 0 0 var(--space-6);
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  font-weight: 400;
+  line-height: 0.9;
+}
+
+.product-page__other-card {
+  display: grid;
+  gap: var(--space-2);
+  width: min(100%, 18rem);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: opacity 180ms ease;
+}
+
+.product-page__other-card:hover,
+.product-page__other-card:focus-visible {
+  opacity: 0.8;
+}
+
+.product-page__other-card:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 0.375rem;
+}
+
+.product-page__other-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 20%, transparent);
+  background: var(--color-surface);
+  object-fit: cover;
+}
+
+.product-page__other-name {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.product-page__other-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.product-page__other-price {
+  color: var(--color-metal);
+  font-size: 0.875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-page__thumb,
+  .product-page__size,
+  .product-page__cta,
+  .product-page__back,
+  .product-page__other-card,
+  .product-page__photo-wrap,
+  .product-page__photo,
+  .product-page__photo-wrap::before,
+  .product-page__accordion-trigger,
+  .product-page__accordion-mark::after,
+  .product-page__accordion-panel {
+    transition: none;
+  }
+
+  .product-page__photo-wrap:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,83 @@
+<section class="panel">
+  <header class="panel__header">
+    <div>
+      <h1 class="panel__title">Categorías</h1>
+      <p class="panel__hint">
+        Las categorías clasifican el catálogo. La tienda todavía no muestra filtros por categoría:
+        se preparan para cuando haya más productos.
+      </p>
+    </div>
+  </header>
+
+  <app-panel-mensaje [error]="error()" [aviso]="aviso()" />
+
+  <div class="caja">
+    <h2 class="caja__title">Nueva categoría</h2>
+    <form class="formulario formulario--ancho" (ngSubmit)="crear()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input
+          type="text"
+          placeholder="Buzos"
+          [value]="nuevaNombre()"
+          (input)="nuevaNombre.set($any($event.target).value)"
+        />
+      </label>
+      <div class="formulario__acciones">
+        <button type="submit" class="boton boton--principal">Crear</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="caja">
+    <h2 class="caja__title">Listado</h2>
+    @if (categorias.hasValue() && categorias.value()!.length > 0) {
+      <ul class="lista">
+        @for (categoria of categorias.value()!; track categoria.id) {
+          <li class="lista__item">
+            @if (editandoId() === categoria.id) {
+              <input
+                type="text"
+                class="lista__edicion"
+                [value]="editandoNombre()"
+                (input)="editandoNombre.set($any($event.target).value)"
+              />
+              <div class="lista__acciones">
+                <button
+                  type="button"
+                  class="boton boton--mini boton--principal"
+                  (click)="guardarEdicion(categoria.id)"
+                >
+                  Guardar
+                </button>
+                <button type="button" class="boton boton--mini" (click)="cancelarEdicion()">
+                  Cancelar
+                </button>
+              </div>
+            } @else {
+              <span class="lista__nombre">{{ categoria.nombre }}</span>
+              <div class="lista__acciones">
+                <button
+                  type="button"
+                  class="boton boton--mini"
+                  (click)="editar(categoria.id, categoria.nombre)"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  class="boton boton--mini boton--peligro"
+                  (click)="eliminar(categoria.id, categoria.nombre)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="tabla__vacia">Todavía no hay categorías.</p>
+    }
+  </div>
+</section>

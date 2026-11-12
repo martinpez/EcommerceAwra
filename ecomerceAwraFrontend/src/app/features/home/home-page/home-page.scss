@@ -1,0 +1,128 @@
+.landing-page {
+  position: relative;
+}
+
+.landing-page__rail {
+  position: fixed;
+  z-index: 10;
+  top: 50%;
+  left: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  transform: translateY(-50%);
+}
+
+.landing-page__rail a {
+  position: relative;
+  writing-mode: vertical-rl;
+  color: var(--color-text-muted);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+/*
+ * Barra del menú lateral. El texto va en vertical, así que la barra crece
+ * hacia abajo en vez de hacia la derecha.
+ */
+.landing-page__rail a::after {
+  position: absolute;
+  top: 0;
+  right: -0.4rem;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-metal);
+  content: '';
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 320ms var(--ease-awra);
+}
+
+.landing-page__rail a:hover::after,
+.landing-page__rail a:focus-visible::after {
+  transform: scaleY(1);
+}
+
+.landing-page__rail a:hover,
+.landing-page__rail a:focus-visible {
+  color: var(--color-text);
+  transform: translateX(0.125rem);
+}
+
+.landing-page__ediciones {
+  padding: var(--space-12) var(--page-gutter);
+}
+
+/*
+ * Escenario de las ediciones. Todas las ediciones comparten la misma celda de
+ * la rejilla, así pueden superponerse durante la transición vertical sin que
+ * el contenido se desplace. `overflow: hidden` recorta lo que sale del
+ * escenario mientras la sección está fijada.
+ */
+.landing-page__ediciones-stage {
+  position: relative;
+  display: grid;
+  min-height: 100dvh;
+  align-items: center;
+  overflow: hidden;
+}
+
+.landing-page__ediciones-stage > app-edition-showcase {
+  grid-area: 1 / 1;
+}
+
+.landing-page__section-label {
+  max-width: var(--content-width);
+  margin: 0 auto var(--space-8);
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+.landing-page__ediciones .landing-page__section-label {
+  position: absolute;
+  z-index: 2;
+  top: var(--space-4);
+  left: 50%;
+  width: min(100%, var(--content-width));
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+/* Estado sin ediciones: cargando, error o todavía no hay nada publicado. */
+.landing-page__estado {
+  display: grid;
+  min-height: 60dvh;
+  place-content: center;
+  padding: var(--space-12) var(--page-gutter);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-page__ediciones-stage {
+    display: block;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .landing-page__ediciones-stage > app-edition-showcase {
+    display: block;
+    margin-bottom: var(--space-8);
+  }
+
+  .landing-page__ediciones .landing-page__section-label {
+    position: static;
+    width: min(100%, var(--content-width));
+    margin: 0 auto var(--space-8);
+    transform: none;
+  }
+}

@@ -1,0 +1,106 @@
+.login {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: var(--space-8) var(--page-gutter);
+  background: var(--color-bg);
+}
+
+.login__form {
+  display: grid;
+  gap: var(--space-4);
+  width: min(100%, 24rem);
+}
+
+.login__marca {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: var(--space-2);
+}
+
+.login__nombre {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  letter-spacing: 0.04em;
+}
+
+.login__tag {
+  color: var(--color-metal);
+  font-size: 0.5625rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.login__intro {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.login__error {
+  margin: 0;
+  padding: var(--space-3);
+  border: 1px solid var(--color-stop);
+  background: color-mix(in srgb, var(--color-stop) 12%, transparent);
+  color: #ffd9d6;
+  font-size: 0.8125rem;
+}
+
+.login__campo {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.login__campo span {
+  color: var(--color-metal);
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.login__campo input {
+  padding: 0.7rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 32%, transparent);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.9375rem;
+}
+
+.login__campo input:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 1px;
+}
+
+.login__boton {
+  margin-top: var(--space-2);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-text);
+  background: var(--color-text);
+  color: var(--color-bg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.login__boton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.login__volver {
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.login__volver:hover {
+  color: var(--color-text);
+}

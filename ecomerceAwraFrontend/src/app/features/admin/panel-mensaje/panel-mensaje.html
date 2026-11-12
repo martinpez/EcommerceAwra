@@ -1,0 +1,8 @@
+<div class="panel-mensaje" aria-live="polite">
+  @if (error(); as mensaje) {
+    <p class="panel__error" role="alert">{{ mensaje }}</p>
+  }
+  @if (aviso(); as mensaje) {
+    <p class="panel__ok">{{ mensaje }}</p>
+  }
+</div>

@@ -1,0 +1,68 @@
+<section class="motion-archive" appReveal aria-labelledby="motion-title">
+  <div class="motion-archive__intro">
+    <p class="motion-archive__eyebrow" data-reveal>
+      {{ eyebrow() }}
+    </p>
+    <h2 id="motion-title" class="motion-archive__titulo">
+      <app-letter-title [text]="title()" variante="loader" />
+    </h2>
+    <p class="motion-archive__texto" data-reveal>{{ description() }}</p>
+  </div>
+
+  @if (media().length > 0) {
+    <figure class="motion-archive__stage" data-reveal>
+      <p class="motion-archive__counter">
+        {{ (activeIndex() + 1).toString().padStart(2, '0') }} /
+        {{ media().length.toString().padStart(2, '0') }}
+      </p>
+
+      <div class="motion-archive__frame">
+        <video
+          #video
+          class="motion-archive__video"
+          [src]="media()[activeIndex()].src"
+          [poster]="media()[activeIndex()].poster"
+          [muted]="muted()"
+          [attr.aria-label]="media()[activeIndex()].label"
+          playsinline
+          preload="metadata"
+          (click)="toggleMute()"
+          (ended)="next()"
+          (loadedmetadata)="onReady()"
+        ></video>
+
+        <button
+          type="button"
+          class="motion-archive__sound"
+          [class.is-muted]="muted()"
+          [attr.aria-pressed]="!muted()"
+          [attr.aria-label]="muted() ? 'Activar el sonido del video' : 'Silenciar el video'"
+          (click)="toggleMute()"
+        >
+          <span class="motion-archive__sound-icon" aria-hidden="true"></span>
+          <span class="motion-archive__sound-text">
+            {{ muted() ? 'Sin sonido' : 'Con sonido' }}
+          </span>
+        </button>
+      </div>
+
+      <figcaption class="motion-archive__label">{{ media()[activeIndex()].label }}</figcaption>
+
+      <div class="motion-archive__controls" aria-label="Controles del archivo audiovisual">
+        <button type="button" aria-label="Video anterior" (click)="previous()">←</button>
+        @for (item of media(); track item.id; let index = $index) {
+          <button
+            type="button"
+            [class.is-active]="index === activeIndex()"
+            [attr.aria-label]="'Ver ' + item.label"
+            [attr.aria-current]="index === activeIndex() ? 'true' : null"
+            (click)="select(index)"
+          >
+            {{ (index + 1).toString().padStart(2, '0') }}
+          </button>
+        }
+        <button type="button" aria-label="Siguiente video" (click)="next()">→</button>
+      </div>
+    </figure>
+  }
+</section>

@@ -1,0 +1,14 @@
+<section #section class="hero-section" aria-labelledby="hero-title">
+  <div class="hero-section__frame">
+    <p class="hero-section__origin">{{ brand.origin }}</p>
+    <h1 id="hero-title" class="hero-section__wordmark">
+      <span class="visually-hidden">{{ brand.name }}</span>
+      <app-awra-logo [logo]="logo()" />
+    </h1>
+    <p class="hero-section__slogan">{{ brand.slogan }}</p>
+    <a class="hero-section__scroll" href="#quienes-somos">
+      <span aria-hidden="true">✦</span>
+      Descubrir
+    </a>
+  </div>
+</section>

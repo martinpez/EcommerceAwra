@@ -1,0 +1,160 @@
+<section class="panel">
+  <header class="panel__header">
+    <div>
+      <h1 class="panel__title">Productos</h1>
+      <p class="panel__hint">
+        Un producto en <strong>borrador</strong> no aparece en la tienda ni en las ediciones de la
+        Home. <strong>Agotado</strong> sí aparece, pero con la insignia: el stock manda, no el
+        estado.
+      </p>
+    </div>
+    <a class="boton boton--principal" routerLink="/admin/productos/nuevo">Nuevo producto</a>
+  </header>
+
+  <app-panel-mensaje [error]="error()" [aviso]="aviso()" />
+
+  <div class="panel__toolbar">
+    <label class="campo">
+      <span class="campo__etiqueta">Estado</span>
+      <select [value]="estado()" (change)="filtrarPorEstado($any($event.target).value)">
+        <option value="">Todos</option>
+        <option value="BORRADOR">Borrador</option>
+        <option value="PUBLICADO">Publicado</option>
+        <option value="OCULTO">Oculto</option>
+      </select>
+    </label>
+
+    <label class="campo">
+      <span class="campo__etiqueta">Categoría</span>
+      <select
+        [value]="categoriaId() ?? ''"
+        (change)="filtrarPorCategoria($any($event.target).value)"
+      >
+        <option value="">Todas</option>
+        @for (categoria of categorias.value() ?? []; track categoria.id) {
+          <option [value]="categoria.id">{{ categoria.nombre }}</option>
+        }
+      </select>
+    </label>
+
+    <label class="campo">
+      <span class="campo__etiqueta">Buscar</span>
+      <input
+        type="search"
+        placeholder="Nombre del producto"
+        (input)="buscar($any($event.target).value)"
+      />
+    </label>
+  </div>
+
+  <div class="caja">
+    @if (productos.isLoading()) {
+      <p class="tabla__vacia">Cargando…</p>
+    } @else if (productos.hasValue() && productos.value()!.content.length > 0) {
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (producto of productos.value()!.content; track producto.id) {
+            <tr>
+              <td>
+                <a class="tabla__enlace" [routerLink]="['/admin/productos', producto.id]">
+                  {{ producto.nombre }}
+                </a>
+              </td>
+              <td>{{ producto.categoriaNombre }}</td>
+              <td>{{ precio(producto.precio) }}</td>
+              <td>
+                {{ producto.stockTotal }}
+                @if (producto.disponibilidad === 'SIN_STOCK') {
+                  <span class="insignia insignia--agotado">Agotado</span>
+                }
+              </td>
+              <td>
+                <span
+                  class="insignia"
+                  [class.insignia--publicado]="producto.estadoPublicacion === 'PUBLICADO'"
+                  [class.insignia--borrador]="producto.estadoPublicacion === 'BORRADOR'"
+                >
+                  {{ producto.estadoPublicacion }}
+                </span>
+              </td>
+              <td>
+                <div class="lista__acciones">
+                  <a class="boton boton--mini" [routerLink]="['/admin/productos', producto.id]">
+                    Editar
+                  </a>
+                  @if (producto.estadoPublicacion === 'PUBLICADO') {
+                    <button
+                      type="button"
+                      class="boton boton--mini"
+                      (click)="cambiarEstado(producto.id, 'OCULTO')"
+                    >
+                      Ocultar
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="boton boton--mini"
+                      (click)="cambiarEstado(producto.id, 'PUBLICADO')"
+                    >
+                      Publicar
+                    </button>
+                  }
+                  @if (producto.estadoPublicacion !== 'BORRADOR') {
+                    <button
+                      type="button"
+                      class="boton boton--mini"
+                      (click)="cambiarEstado(producto.id, 'BORRADOR')"
+                    >
+                      A borrador
+                    </button>
+                  }
+                  <button
+                    type="button"
+                    class="boton boton--mini boton--peligro"
+                    (click)="eliminar(producto.id, producto.nombre)"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      @if (totalPaginas() > 1) {
+        <div class="paginacion">
+          <button
+            type="button"
+            class="boton boton--mini"
+            [disabled]="productos.value()!.page.number === 0"
+            (click)="irAPagina(productos.value()!.page.number - 1)"
+          >
+            Anterior
+          </button>
+          <span> Página {{ productos.value()!.page.number + 1 }} de {{ totalPaginas() }} </span>
+          <button
+            type="button"
+            class="boton boton--mini"
+            [disabled]="productos.value()!.page.number + 1 >= totalPaginas()"
+            (click)="irAPagina(productos.value()!.page.number + 1)"
+          >
+            Siguiente
+          </button>
+        </div>
+      }
+    } @else {
+      <p class="tabla__vacia">No hay productos que coincidan con el filtro.</p>
+    }
+  </div>
+</section>

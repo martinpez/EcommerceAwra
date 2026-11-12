@@ -1,0 +1,214 @@
+.catalog {
+  display: grid;
+  gap: var(--space-8);
+  width: min(100% - (var(--page-gutter) * 2), var(--content-width));
+  min-height: 100dvh;
+  align-content: center;
+  margin: 0 auto;
+  padding: var(--space-8) 0;
+  border-top: var(--border-thin);
+  border-bottom: var(--border-thin);
+}
+
+.catalog__eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+.catalog h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 5vw, 6rem);
+  font-weight: 400;
+  line-height: 0.88;
+}
+
+.catalog__viewport {
+  position: relative;
+  height: clamp(32rem, 64vh, 44rem);
+  perspective: 80rem;
+  perspective-origin: 50% 42%;
+}
+
+.catalog__track {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  user-select: none;
+}
+
+.catalog__track.is-dragging {
+  cursor: grabbing;
+}
+
+.catalog__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: clamp(14rem, 19vw, 18rem);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    transform 600ms var(--ease-awra),
+    opacity 600ms var(--ease-awra);
+}
+
+.catalog__card:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 0.375rem;
+}
+
+/* Caja con dimensiones reservadas: foto (80%) + banda de reflejo. */
+.catalog__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 5;
+  background: var(--color-surface);
+}
+
+.catalog__photo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+}
+
+/*
+ * Reflejo: la misma foto volteada, recortada por la caja y desvanecida con
+ * máscara. La máscara se aplica antes del volteo, por eso el degradado va de
+ * transparente a negro: tras voltearse queda opaco junto a la foto.
+ */
+.catalog__reflection {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 80%;
+  object-fit: cover;
+  opacity: 0.38;
+  pointer-events: none;
+  transform: scaleY(-1);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 65%, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 65%, #000 100%);
+}
+
+.catalog__meta {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-3);
+  transition: opacity 400ms var(--ease-awra);
+}
+
+/* Solo la tarjeta activa muestra su ficha: evita que los textos se pisen. */
+.catalog__card:not(.is-active) .catalog__meta {
+  opacity: 0;
+}
+
+.catalog__name {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.catalog__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.catalog__price {
+  color: var(--color-metal);
+  font-size: 0.875rem;
+}
+
+.catalog__badge {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 50%, transparent);
+  color: var(--color-text-muted);
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.catalog__badge.is-out {
+  border-style: dashed;
+  opacity: 0.7;
+}
+
+.catalog__arrow {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 45%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 1rem;
+  transform: translateY(-50%);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.catalog__arrow:hover:not(:disabled),
+.catalog__arrow:focus-visible {
+  border-color: var(--color-metal);
+  color: var(--color-metal);
+}
+
+.catalog__arrow:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.catalog__arrow--prev {
+  left: 0;
+}
+
+.catalog__arrow--next {
+  right: 0;
+}
+
+.catalog__footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.catalog__counter {
+  margin: 0;
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+}
+
+.catalog__hint {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog__card,
+  .catalog__meta {
+    transition: none;
+  }
+}

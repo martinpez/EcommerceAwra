@@ -1,0 +1,33 @@
+:root {
+  --color-bg: #160706;
+  --color-surface: #1e0d0c;
+  --color-surface-raised: #271614;
+  --color-text: #ededed;
+  --color-text-muted: #a1908e;
+  --color-metal: #c0c0c0;
+  --color-stop: #e10600;
+  /*
+   * El rojo de marca sobre el fondo oscuro da 3.96:1, y no llega al 4.5:1
+   * que exige WCAG para texto normal. Esta variante mas clara da 6.41:1 y se
+   * usa cuando el rojo se escribe (insignias, botones de peligro). El rojo de
+   * marca sigue para rellenos, bordes y detalles.
+   */
+  --color-stop-texto: #ff5a52;
+
+  --font-display: 'Pirata One', Georgia, serif;
+  --font-ui: 'Inter', Arial, sans-serif;
+
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-12: 6rem;
+
+  --border-thin: 1px solid var(--color-metal);
+  --radius-sharp: 0.1875rem;
+  --content-width: 90rem;
+  --page-gutter: clamp(1.5rem, 4vw, 4rem);
+  --ease-awra: cubic-bezier(0.22, 1, 0.36, 1);
+}

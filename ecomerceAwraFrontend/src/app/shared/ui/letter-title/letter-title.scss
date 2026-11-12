@@ -1,0 +1,42 @@
+/*
+ * Titulo partido en letras.
+ *
+ * La mascara recorta la letra para que al subir se vea como si emergiera
+ * desde debajo de una linea (variante "loader"). En la variante "escalera"
+ * no hace falta recortar: las letras suben desde distintas alturas.
+ */
+:host {
+  display: inline;
+}
+
+/*
+ * Cada palabra va en su propia caja: las letras sueltas permitirian al
+ * navegador cortar la linea en medio de una palabra.
+ */
+.palabra {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.espacio {
+  display: inline;
+}
+
+.letra-mascara {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0 0.01em;
+}
+
+.letra {
+  display: inline-block;
+  will-change: transform;
+}
+
+/*
+ * En la variante escalera las letras suben desde distintas alturas: si la
+ * mascara las recortara, se verian cortadas al pasar.
+ */
+.letra-mascara--suelta {
+  overflow: visible;
+}

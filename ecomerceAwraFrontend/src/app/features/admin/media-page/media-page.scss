@@ -1,0 +1,13 @@
+@use '../panel';
+
+.miniatura {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  background: var(--color-bg);
+  border: 1px solid color-mix(in srgb, var(--color-metal) 20%, transparent);
+}
+
+.miniatura--video {
+  object-fit: cover;
+}

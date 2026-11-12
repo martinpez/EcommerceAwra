@@ -1,0 +1,20 @@
+<section class="contact-section" appReveal aria-labelledby="contact-title">
+  <p class="contact-section__eyebrow" data-reveal>
+    {{ section()?.eyebrow ?? brand.navigation.contact }}
+  </p>
+  <h2 id="contact-title">
+    <app-letter-title [text]="section()?.titulo ?? brand.contact.title" variante="escalera" />
+  </h2>
+  <p data-reveal>{{ section()?.cuerpo ?? brand.contact.description }}</p>
+
+  <div class="contact-section__actions" data-reveal>
+    <a [href]="whatsappUrl()" target="_blank" rel="noreferrer">Pedir por WhatsApp</a>
+    @for (red of redes(); track red.nombre) {
+      <a [href]="red.url" target="_blank" rel="noreferrer">{{ red.nombre }}</a>
+    }
+  </div>
+
+  @if (datos(); as info) {
+    <p class="contact-section__data" data-reveal>{{ info }}</p>
+  }
+</section>

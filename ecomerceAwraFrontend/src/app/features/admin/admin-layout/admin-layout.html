@@ -1,0 +1,29 @@
+<div class="admin">
+  <aside class="admin__side">
+    <a class="admin__brand" routerLink="/">
+      <span class="admin__brand-name">AWRA</span>
+      <span class="admin__brand-tag">panel</span>
+    </a>
+
+    <nav class="admin__nav" aria-label="Secciones del panel">
+      <a routerLink="/admin/productos" routerLinkActive="is-active">Productos</a>
+      <a routerLink="/admin/inventario" routerLinkActive="is-active">Inventario</a>
+      <a routerLink="/admin/ediciones" routerLinkActive="is-active">Ediciones de la Home</a>
+      <a routerLink="/admin/categorias" routerLinkActive="is-active">Categorías</a>
+      <a routerLink="/admin/contenido" routerLinkActive="is-active">Contenido</a>
+      <a routerLink="/admin/multimedia" routerLinkActive="is-active">Medios y videos</a>
+    </nav>
+
+    <div class="admin__session">
+      <span class="admin__user">{{ session.usuario()?.username ?? '—' }}</span>
+      <div class="admin__session-actions">
+        <a class="admin__link" routerLink="/">Ver la web</a>
+        <button type="button" class="admin__salir" (click)="salir()">Salir</button>
+      </div>
+    </div>
+  </aside>
+
+  <main id="contenido" class="admin__main">
+    <router-outlet />
+  </main>
+</div>

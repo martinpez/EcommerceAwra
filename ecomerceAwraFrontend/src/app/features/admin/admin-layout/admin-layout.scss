@@ -1,0 +1,123 @@
+.admin {
+  display: grid;
+  grid-template-columns: 16rem 1fr;
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+
+.admin__side {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-8);
+  padding: var(--space-6) var(--space-4);
+  border-right: 1px solid color-mix(in srgb, var(--color-metal) 22%, transparent);
+  background: var(--color-surface);
+}
+
+.admin__brand {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0 var(--space-2);
+  text-decoration: none;
+}
+
+.admin__brand-name {
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  letter-spacing: 0.04em;
+}
+
+.admin__brand-tag {
+  color: var(--color-metal);
+  font-size: 0.5625rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.admin__nav {
+  display: grid;
+  align-content: start;
+  gap: 0.15rem;
+}
+
+.admin__nav a {
+  padding: 0.6rem var(--space-2);
+  border-left: 2px solid transparent;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  text-decoration: none;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.admin__nav a:hover,
+.admin__nav a:focus-visible {
+  color: var(--color-text);
+}
+
+.admin__nav a.is-active {
+  border-left-color: var(--color-stop);
+  color: var(--color-text);
+}
+
+.admin__session {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-2) 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-metal) 18%, transparent);
+}
+
+.admin__user {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.admin__session-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.admin__link,
+.admin__salir {
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.admin__link:hover,
+.admin__salir:hover {
+  color: var(--color-text);
+}
+
+.admin__main {
+  min-width: 0;
+}
+
+@media (max-width: 60rem) {
+  .admin {
+    grid-template-columns: 1fr;
+  }
+
+  .admin__side {
+    grid-template-rows: auto auto auto;
+    border-right: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-metal) 22%, transparent);
+  }
+
+  .admin__nav {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: auto;
+  }
+}

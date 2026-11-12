@@ -1,0 +1,90 @@
+<section class="catalog" aria-labelledby="catalog-title">
+  <div class="catalog__intro">
+    <p class="catalog__eyebrow">{{ sectionEyebrow() }}</p>
+    <h2 id="catalog-title">{{ sectionTitle() }}</h2>
+  </div>
+
+  @if (products().length > 0) {
+    <div
+      #viewport
+      class="catalog__viewport"
+      role="region"
+      aria-roledescription="carrusel"
+      aria-label="Colección de productos AWRA"
+      (keydown)="onKeydown($event)"
+    >
+      <div class="catalog__track" [class.is-dragging]="dragging()">
+        @for (product of products(); track product.id; let index = $index) {
+          <a
+            class="catalog__card"
+            [class.is-active]="index === activeIndex()"
+            [routerLink]="['/producto', product.id]"
+            [style.transform]="cardTransform(index)"
+            [style.opacity]="cardOpacity(index)"
+            [style.z-index]="index === activeIndex() ? 5 : 1"
+            [attr.inert]="isFar(index) ? '' : null"
+            [attr.aria-current]="index === activeIndex() ? 'true' : null"
+          >
+            <span class="catalog__media">
+              <img
+                class="catalog__photo"
+                [src]="photoOf(product)"
+                [alt]="product.nombre"
+                draggable="false"
+                loading="eager"
+                decoding="async"
+              />
+              <img
+                class="catalog__reflection"
+                [src]="photoOf(product)"
+                alt=""
+                aria-hidden="true"
+                draggable="false"
+                loading="eager"
+                decoding="async"
+              />
+            </span>
+            <span class="catalog__meta">
+              <span class="catalog__name">{{ product.nombre }}</span>
+              <span class="catalog__row">
+                <span class="catalog__price">{{ priceOf(product.precio) }}</span>
+                <span
+                  class="catalog__badge"
+                  [class.is-out]="product.disponibilidad === 'SIN_STOCK'"
+                >
+                  {{ product.etiqueta }}
+                </span>
+              </span>
+            </span>
+          </a>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="catalog__arrow catalog__arrow--prev"
+        aria-label="Producto anterior"
+        [disabled]="atStart()"
+        (click)="previous()"
+      >
+        ←
+      </button>
+      <button
+        type="button"
+        class="catalog__arrow catalog__arrow--next"
+        aria-label="Producto siguiente"
+        [disabled]="atEnd()"
+        (click)="next()"
+      >
+        →
+      </button>
+    </div>
+
+    <div class="catalog__footer">
+      <p class="catalog__counter" aria-live="polite">
+        {{ pad(activeIndex() + 1) }} / {{ pad(products().length) }}
+      </p>
+      <p class="catalog__hint">Arrastra, usa las flechas o desliza con el trackpad</p>
+    </div>
+  }
+</section>

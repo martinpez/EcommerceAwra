@@ -1,0 +1,215 @@
+/*
+ * La sección "En movimiento" tiene dos columnas: el texto a la izquierda y
+ * el reproductor a la derecha.
+ *
+ * Las columnas están equilibradas para que el título grande tenga sitio: con
+ * una columna estrecha, "movimiento" se partía a la mitad y el texto quedaba
+ * amontonado en tres líneas.
+ */
+.motion-archive {
+  display: grid;
+  grid-template-columns: minmax(22rem, 1fr) minmax(19rem, 0.66fr);
+  gap: var(--space-8);
+  width: min(100% - (var(--page-gutter) * 2), var(--content-width));
+  min-height: 100dvh;
+  align-items: center;
+  margin: 0 auto;
+  padding: var(--space-8) 8%;
+  border-top: var(--border-thin);
+  border-bottom: var(--border-thin);
+}
+
+.motion-archive__intro {
+  max-width: 34rem;
+}
+
+.motion-archive__eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+/*
+ * El título se lleva a tamaño grande: es el cartel de la sección y sus
+ * letras suben con la animación del arranque de la web.
+ *
+ * `balance` reparte las dos líneas ("AWRA en" / "movimiento.") en vez de
+ * dejar una palabra partida, y `nowrap` en la palabra larga impide que la
+ * fuente la corte por la mitad.
+ */
+.motion-archive__titulo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 6vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.92;
+  text-wrap: balance;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.motion-archive__texto {
+  max-width: 32ch;
+  margin: var(--space-5) 0 0;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/*
+ * El reproductor es una columna centrada: contador arriba, video, etiqueta y
+ * controles debajo, todo alineado con el video.
+ */
+.motion-archive__stage {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.motion-archive__counter {
+  margin: 0;
+  color: var(--color-metal);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+}
+
+.motion-archive__video {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: min(56dvh, 40rem);
+  aspect-ratio: 9 / 16;
+  border: 1px solid var(--color-metal);
+  background: var(--color-surface);
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Contenedor del video: permite colocar el control de sonido encima. */
+.motion-archive__frame {
+  position: relative;
+  display: grid;
+  justify-items: center;
+}
+
+.motion-archive__sound {
+  position: absolute;
+  right: 0;
+  bottom: var(--space-2);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.375rem 0.625rem;
+  border: 1px solid color-mix(in srgb, var(--color-metal) 50%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.5625rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition:
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.motion-archive__sound:hover,
+.motion-archive__sound:focus-visible {
+  border-color: var(--color-metal);
+}
+
+.motion-archive__sound:focus-visible {
+  outline: 1px solid var(--color-metal);
+  outline-offset: 0.25rem;
+}
+
+.motion-archive__sound.is-muted {
+  color: var(--color-text-muted);
+}
+
+/* Altavoz dibujado con CSS: caja + diafragma. */
+.motion-archive__sound-icon {
+  position: relative;
+  display: block;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.motion-archive__sound-icon::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0.3125rem;
+  height: 0.4375rem;
+  background: currentColor;
+  transform: translateY(-50%);
+  content: '';
+}
+
+.motion-archive__sound-icon::after {
+  position: absolute;
+  top: 50%;
+  left: 0.25rem;
+  width: 0;
+  height: 0;
+  border-top: 0.3125rem solid transparent;
+  border-bottom: 0.3125rem solid transparent;
+  border-right: 0.375rem solid currentColor;
+  transform: translateY(-50%);
+  content: '';
+}
+
+/* La raya diagonal marca el silencio. */
+.motion-archive__sound.is-muted .motion-archive__sound-icon {
+  background-image: linear-gradient(
+    to bottom right,
+    transparent calc(50% - 0.5px),
+    currentColor calc(50% - 0.5px),
+    currentColor calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+.motion-archive__label {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.motion-archive__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.motion-archive__controls button {
+  min-width: 2.25rem;
+  padding: var(--space-1);
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  letter-spacing: 0.15em;
+}
+
+.motion-archive__controls button:hover,
+.motion-archive__controls button:focus-visible,
+.motion-archive__controls button.is-active {
+  border-bottom-color: var(--color-metal);
+  color: var(--color-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-archive__sound {
+    transition: none;
+  }
+}

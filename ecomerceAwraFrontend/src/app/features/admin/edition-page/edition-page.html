@@ -1,0 +1,129 @@
+<section class="panel">
+  <header class="panel__header">
+    <div>
+      <h1 class="panel__title">Ediciones de la Home</h1>
+      <p class="panel__hint">
+        Las ediciones son el escaparate de la web: decide qué productos aparecen y en qué orden. Una
+        edición solo se ve si su producto está
+        <strong>publicado</strong>; si el producto está en borrador u oculto, la edición se esconde
+        pero se conserva.
+      </p>
+    </div>
+    <button type="button" class="boton boton--principal" (click)="nueva()">Nueva edición</button>
+  </header>
+
+  <app-panel-mensaje [error]="error()" [aviso]="aviso()" />
+
+  @if (editandoId() !== null) {
+    <div class="caja">
+      <h2 class="caja__title">
+        {{ editandoId() === 0 ? 'Nueva edición' : 'Editar edición' }}
+      </h2>
+
+      <form class="formulario" (ngSubmit)="guardar()">
+        <label class="campo">
+          <span class="campo__etiqueta">Producto</span>
+          <select
+            [value]="formulario().productoId"
+            (change)="campo('productoId', +$any($event.target).value)"
+          >
+            <option [value]="0">Elige un producto</option>
+            @for (producto of productos.value()?.content ?? []; track producto.id) {
+              <option [value]="producto.id">
+                {{ producto.nombre }} ({{ producto.estadoPublicacion }})
+              </option>
+            }
+          </select>
+        </label>
+
+        <label class="campo">
+          <span class="campo__etiqueta">Eyebrow</span>
+          <input
+            type="text"
+            placeholder="Edición I"
+            [value]="formulario().eyebrow"
+            (input)="campo('eyebrow', $any($event.target).value)"
+          />
+        </label>
+
+        <label class="campo">
+          <span class="campo__etiqueta">Título</span>
+          <input
+            type="text"
+            placeholder="AWRA"
+            [value]="formulario().titulo"
+            (input)="campo('titulo', $any($event.target).value)"
+          />
+        </label>
+
+        <label class="campo">
+          <span class="campo__etiqueta">Orden</span>
+          <input
+            type="number"
+            min="0"
+            [value]="formulario().orden"
+            (input)="campo('orden', +$any($event.target).value)"
+          />
+        </label>
+
+        <label class="campo formulario--ancho">
+          <span class="campo__etiqueta">Descripción</span>
+          <textarea
+            rows="3"
+            [value]="formulario().descripcion"
+            (input)="campo('descripcion', $any($event.target).value)"
+          ></textarea>
+        </label>
+
+        <label class="interruptor">
+          <input
+            type="checkbox"
+            [checked]="formulario().activa"
+            (change)="campo('activa', $any($event.target).checked)"
+          />
+          <span>Activa</span>
+        </label>
+
+        <div class="formulario__acciones">
+          <button type="submit" class="boton boton--principal">Guardar</button>
+          <button type="button" class="boton" (click)="cancelar()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="caja">
+    <h2 class="caja__title">Listado</h2>
+    @if (ediciones.hasValue() && ediciones.value()!.length > 0) {
+      <ul class="lista">
+        @for (edicion of ediciones.value()!; track edicion.id) {
+          <li class="lista__item">
+            <div class="lista__datos">
+              <span class="lista__nombre">
+                {{ edicion.eyebrow ?? '' }} {{ edicion.titulo ?? '' }}
+                <span class="insignia insignia--publicado">Orden {{ edicion.orden }}</span>
+              </span>
+              <span class="lista__meta">
+                {{ edicion.productoNombre }} —
+                {{ edicion.productoEstado }}
+                @if (!edicion.productoEstado || edicion.productoEstado !== 'PUBLICADO') {
+                  <span class="insignia insignia--agotado">No se ve en la web</span>
+                }
+                @if (!edicion.activa) {
+                  <span class="insignia insignia--borrador">Edición inactiva</span>
+                }
+              </span>
+            </div>
+            <div class="lista__acciones">
+              <button type="button" class="boton boton--mini" (click)="editar(edicion.id)">
+                Editar
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="tabla__vacia">Todavía no hay ediciones en la Home.</p>
+    }
+  </div>
+</section>

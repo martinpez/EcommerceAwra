@@ -1,0 +1,37 @@
+/*
+ * Guia de secciones en el borde derecho.
+ *
+ * Las marcas son rectangulos pequenos. La de la sección activa se ilumina con
+ * el rojo de marca y crece un poco; las demas quedan en un metal apagado.
+ */
+.indicador {
+  position: fixed;
+  z-index: 10;
+  top: 50%;
+  right: var(--space-4);
+  display: grid;
+  gap: var(--space-2);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.indicador__marca {
+  display: block;
+  width: 3px;
+  height: 0.875rem;
+  background: color-mix(in srgb, var(--color-metal) 30%, transparent);
+  transition:
+    height 320ms var(--ease-awra),
+    background-color 320ms var(--ease-awra);
+}
+
+.indicador__marca.is-activa {
+  height: 1.5rem;
+  background: var(--color-stop);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicador__marca {
+    transition: none;
+  }
+}

@@ -1,0 +1,225 @@
+<section class="panel">
+  <header class="panel__header">
+    <div>
+      <h1 class="panel__title">Contenido del sitio</h1>
+      <p class="panel__hint">
+        Los datos de la empresa (WhatsApp, redes, dirección) y los textos de las secciones de la
+        web. Lo que cambies aquí se ve en la tienda pública.
+      </p>
+    </div>
+  </header>
+
+  <app-panel-mensaje [error]="error()" [aviso]="aviso()" />
+
+  <div class="caja">
+    <h2 class="caja__title">Empresa</h2>
+    <form class="formulario" (ngSubmit)="guardarEmpresa()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input
+          type="text"
+          [value]="formulario().nombre"
+          (input)="campo('nombre', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">WhatsApp (solo dígitos)</span>
+        <input
+          type="text"
+          placeholder="573123461277"
+          [value]="formulario().whatsapp"
+          (input)="campo('whatsapp', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Teléfono</span>
+        <input
+          type="text"
+          [value]="formulario().telefono"
+          (input)="campo('telefono', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Correo</span>
+        <input
+          type="email"
+          [value]="formulario().email"
+          (input)="campo('email', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Dirección</span>
+        <input
+          type="text"
+          [value]="formulario().direccion"
+          (input)="campo('direccion', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Ciudad</span>
+        <input
+          type="text"
+          [value]="formulario().ciudad"
+          (input)="campo('ciudad', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">País</span>
+        <input
+          type="text"
+          [value]="formulario().pais"
+          (input)="campo('pais', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Horario</span>
+        <input
+          type="text"
+          [value]="formulario().horario"
+          (input)="campo('horario', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Instagram</span>
+        <input
+          type="url"
+          placeholder="https://instagram.com/awra"
+          [value]="formulario().instagram"
+          (input)="campo('instagram', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">TikTok</span>
+        <input
+          type="url"
+          [value]="formulario().tiktok"
+          (input)="campo('tiktok', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Facebook</span>
+        <input
+          type="url"
+          [value]="formulario().facebook"
+          (input)="campo('facebook', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">YouTube</span>
+        <input
+          type="url"
+          [value]="formulario().youtube"
+          (input)="campo('youtube', $any($event.target).value)"
+        />
+      </label>
+
+      <label class="campo formulario--ancho">
+        <span class="campo__etiqueta">Descripción</span>
+        <textarea
+          rows="3"
+          [value]="formulario().descripcion"
+          (input)="campo('descripcion', $any($event.target).value)"
+        ></textarea>
+      </label>
+
+      <label class="campo formulario--ancho">
+        <span class="campo__etiqueta">Slogan</span>
+        <input
+          type="text"
+          [value]="formulario().slogan"
+          (input)="campo('slogan', $any($event.target).value)"
+        />
+      </label>
+
+      <div class="formulario__acciones">
+        <button type="submit" class="boton boton--principal" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando…' : 'Guardar empresa' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="caja">
+    <h2 class="caja__title">Secciones</h2>
+    <p class="panel__hint">
+      La clave identifica la sección en el código (por ejemplo
+      <code>QUIENES_SOMOS</code>): no se cambia. Lo que sí se cambia es el texto y si la sección
+      está activa.
+    </p>
+
+    <ul class="lista">
+      @for (seccion of secciones.value() ?? []; track seccion.id) {
+        <li class="lista__item">
+          @if (editandoSeccion() === seccion.id) {
+            <div class="seccion-form">
+              <input
+                type="text"
+                [value]="seccionFormulario().eyebrow"
+                placeholder="Eyebrow"
+                (input)="campoSeccion('eyebrow', $any($event.target).value)"
+              />
+              <input
+                type="text"
+                [value]="seccionFormulario().titulo"
+                placeholder="Título"
+                (input)="campoSeccion('titulo', $any($event.target).value)"
+              />
+              <textarea
+                rows="3"
+                [value]="seccionFormulario().cuerpo"
+                placeholder="Texto"
+                (input)="campoSeccion('cuerpo', $any($event.target).value)"
+              ></textarea>
+              <label class="interruptor">
+                <input
+                  type="checkbox"
+                  [checked]="seccionFormulario().activa"
+                  (change)="campoSeccion('activa', $any($event.target).checked)"
+                />
+                <span>Activa</span>
+              </label>
+              <div class="lista__acciones">
+                <button
+                  type="button"
+                  class="boton boton--mini boton--principal"
+                  (click)="guardarSeccion(seccion.id)"
+                >
+                  Guardar
+                </button>
+                <button type="button" class="boton boton--mini" (click)="editandoSeccion.set(null)">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="lista__datos">
+              <span class="lista__nombre">
+                {{ seccion.clave }}
+                @if (!seccion.activa) {
+                  <span class="insignia insignia--borrador">Inactiva</span>
+                }
+              </span>
+              <span class="lista__meta">{{ seccion.titulo ?? '—' }}</span>
+            </div>
+            <div class="lista__acciones">
+              <button type="button" class="boton boton--mini" (click)="editarSeccion(seccion.id)">
+                Editar
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</section>

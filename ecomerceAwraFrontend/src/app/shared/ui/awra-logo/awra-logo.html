@@ -1,0 +1,21 @@
+<div class="awra-logo">
+  <img
+    class="awra-logo__layer awra-logo__base"
+    [src]="logoSrc()"
+    [width]="logoWidth()"
+    [height]="logoHeight()"
+    alt=""
+    decoding="async"
+  />
+
+  <img
+    #chrome
+    class="awra-logo__layer awra-logo__chrome"
+    [src]="logoSrc()"
+    [width]="logoWidth()"
+    [height]="logoHeight()"
+    alt=""
+    decoding="async"
+    fetchpriority="high"
+  />
+</div>

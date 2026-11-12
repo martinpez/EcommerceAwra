@@ -1,0 +1,73 @@
+<div class="landing-page">
+  <app-section-indicator [secciones]="clavesSecciones()" [activa]="seccionActiva()" />
+
+  <nav class="landing-page__rail" aria-label="Navegación principal">
+    @if (seccionesVisibles().about) {
+      <a href="#quienes-somos">{{ brand.navigation.about }}</a>
+    }
+    <a href="#ediciones">{{ brand.navigation.editions }}</a>
+    @if (seccionesVisibles().motion) {
+      <a href="#movimiento">{{ brand.navigation.motion }}</a>
+    }
+    @if (seccionesVisibles().contact) {
+      <a href="#contacto">{{ brand.navigation.contact }}</a>
+    }
+  </nav>
+
+  <main id="contenido">
+    <app-hero-section [logo]="logo()" data-seccion="hero" />
+
+    @if (seccionesVisibles().about) {
+      <app-about-section id="quienes-somos" [section]="about()" data-seccion="about" />
+    }
+
+    <section
+      id="ediciones"
+      class="landing-page__ediciones"
+      data-seccion="ediciones"
+      aria-labelledby="ediciones-title"
+    >
+      @if (editions().length > 0) {
+        <div #editionsStage class="landing-page__ediciones-stage">
+          <p id="ediciones-title" class="landing-page__section-label">
+            {{ brand.navigation.editions }}
+          </p>
+
+          @for (edition of editions(); track edition.id; let index = $index) {
+            <app-edition-showcase [edition]="edition" [reverse]="index % 2 === 1" />
+          }
+        </div>
+      } @else {
+        <div class="landing-page__estado">
+          @if (cargando()) {
+            <p>Cargando la colección…</p>
+          } @else if (error()) {
+            <p>No pudimos cargar la colección. Inténtalo de nuevo en un momento.</p>
+          } @else {
+            <p>Próximamente, nuevas ediciones.</p>
+          }
+        </div>
+      }
+    </section>
+
+    @if (seccionesVisibles().motion && motionMedia().length > 0) {
+      <app-motion-archive
+        id="movimiento"
+        [media]="motionMedia()"
+        [eyebrow]="movimiento()?.eyebrow ?? ''"
+        [title]="movimiento()?.titulo ?? ''"
+        [description]="movimiento()?.cuerpo ?? ''"
+        data-seccion="movimiento"
+      />
+    }
+
+    @if (seccionesVisibles().contact) {
+      <app-contact-section
+        id="contacto"
+        [section]="contacto()"
+        [empresa]="empresa()"
+        data-seccion="contacto"
+      />
+    }
+  </main>
+</div>

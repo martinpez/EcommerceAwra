@@ -1,0 +1,180 @@
+<main id="contenido" class="product-page">
+  <a class="product-page__back" routerLink="/">
+    <span aria-hidden="true">←</span>
+    Volver a la colección
+  </a>
+
+  @if (cargando()) {
+    <div class="product-page__empty">
+      <p>Cargando…</p>
+    </div>
+  } @else if (product(); as product) {
+    <article class="product-page__detail" aria-labelledby="product-title">
+      <div class="product-page__media">
+        <div
+          class="product-page__photo-wrap"
+          tabindex="0"
+          role="button"
+          aria-label="Ver el buzo. Presiona Enter para ver la otra vista."
+          (mouseenter)="showOtherView.set(true)"
+          (mouseleave)="showOtherView.set(false)"
+          (keydown)="onPhotoKeydown($event)"
+        >
+          @for (image of images(); track image.url; let index = $index) {
+            <img
+              class="product-page__photo"
+              [class.is-visible]="layers()[index] === 1"
+              [src]="image.url"
+              [alt]="
+                layers()[index] === 1
+                  ? product.nombre + (image.principal ? ' vista principal' : ' vista posterior')
+                  : ''
+              "
+              [attr.aria-hidden]="layers()[index] === 1 ? null : 'true'"
+              decoding="async"
+            />
+          }
+        </div>
+
+        @if (images().length > 1) {
+          <div class="product-page__thumbs" aria-label="Vistas del producto">
+            @for (image of images(); track image.url; let index = $index) {
+              <button
+                type="button"
+                class="product-page__thumb"
+                [class.is-active]="selectedIndex() === index"
+                [attr.aria-pressed]="selectedIndex() === index"
+                [attr.aria-label]="
+                  'Ver ' + (image.principal ? 'vista principal' : 'vista posterior')
+                "
+                (click)="selectImage(index)"
+              >
+                <img
+                  [src]="image.url"
+                  [alt]="
+                    product.nombre + (image.principal ? ' vista principal' : ' vista posterior')
+                  "
+                  decoding="async"
+                  loading="lazy"
+                />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="product-page__info">
+        <p class="product-page__eyebrow">{{ product.categoriaNombre }}</p>
+        <h1 id="product-title">{{ product.nombre }}</h1>
+
+        <p class="product-page__price">{{ priceOf(product.precio) }}</p>
+        @if (product.etiqueta) {
+          <span class="product-page__badge" [class.is-out]="product.disponibilidad === 'SIN_STOCK'">
+            {{ product.etiqueta }}
+          </span>
+        }
+
+        <p class="product-page__description">{{ product.descripcion }}</p>
+
+        @if (product.variantes.length > 0) {
+          <div class="product-page__sizes" role="group" aria-label="Tallas disponibles">
+            @for (variant of product.variantes; track variant.talla) {
+              <button
+                type="button"
+                class="product-page__size"
+                [class.is-selected]="selectedSize() === variant.talla"
+                [disabled]="!variant.disponible"
+                [attr.aria-pressed]="selectedSize() === variant.talla"
+                (click)="selectSize(variant.talla)"
+              >
+                {{ variant.talla }}
+              </button>
+            }
+          </div>
+        }
+
+        <!--
+          El enlace usa [attr.href] y no [href]: con un valor nulo Angular
+          quita el atributo en vez de dejar un href="" que recargaría la
+          página al pulsarlo.
+        -->
+        <a
+          class="product-page__cta"
+          [attr.href]="whatsappUrl()"
+          target="_blank"
+          rel="noopener noreferrer"
+          [attr.aria-disabled]="whatsappUrl() ? null : 'true'"
+        >
+          {{ whatsappUrl() ? 'Pedir por WhatsApp' : 'Agotado por ahora' }}
+        </a>
+
+        <div class="product-page__accordions">
+          @for (item of details(); track item.id) {
+            <div class="product-page__accordion" [class.is-open]="openDetailId() === item.id">
+              <h3 class="product-page__accordion-heading">
+                <button
+                  type="button"
+                  class="product-page__accordion-trigger"
+                  [id]="item.id + '-trigger'"
+                  [attr.aria-expanded]="openDetailId() === item.id"
+                  [attr.aria-controls]="item.id + '-panel'"
+                  (click)="toggleDetail(item.id)"
+                >
+                  <span>{{ item.title }}</span>
+                  <span class="product-page__accordion-mark" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div
+                class="product-page__accordion-panel"
+                [id]="item.id + '-panel'"
+                role="region"
+                [attr.aria-labelledby]="item.id + '-trigger'"
+              >
+                <div class="product-page__accordion-body">
+                  <p>{{ item.body }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </article>
+
+    @if (otherProducts().length === 1) {
+      <section class="product-page__other" aria-labelledby="other-title">
+        <p class="product-page__other-eyebrow">También en</p>
+        <h2 id="other-title">Otro buzo</h2>
+        <a class="product-page__other-card" [routerLink]="['/producto', otherProducts()[0].id]">
+          <img
+            [src]="photoOf(otherProducts()[0])"
+            [alt]="otherProducts()[0].nombre"
+            decoding="async"
+          />
+          <span class="product-page__other-name">{{ otherProducts()[0].nombre }}</span>
+          <span class="product-page__other-row">
+            <span class="product-page__other-price">{{ priceOf(otherProducts()[0].precio) }}</span>
+            @if (otherProducts()[0].etiqueta) {
+              <span
+                class="product-page__badge"
+                [class.is-out]="otherProducts()[0].disponibilidad === 'SIN_STOCK'"
+              >
+                {{ otherProducts()[0].etiqueta }}
+              </span>
+            }
+          </span>
+        </a>
+      </section>
+    } @else if (otherProducts().length > 1) {
+      <app-catalog-cover-flow
+        [productsInput]="otherProducts()"
+        sectionEyebrow="También en"
+        sectionTitle="Otros buzos"
+      />
+    }
+  } @else {
+    <div class="product-page__empty">
+      <p>Producto no encontrado.</p>
+      <a routerLink="/">Volver al inicio</a>
+    </div>
+  }
+</main>

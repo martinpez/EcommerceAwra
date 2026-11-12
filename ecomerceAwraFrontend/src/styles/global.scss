@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+  color-scheme: dark;
+  scrollbar-gutter: stable;
+  font-size: 100%;
+}
+
+body {
+  position: relative;
+  min-width: 80rem;
+  min-height: 100dvh;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body::after {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image:
+    radial-gradient(circle at 20% 30%, var(--color-text) 0 0.04rem, transparent 0.05rem),
+    radial-gradient(circle at 70% 80%, var(--color-metal) 0 0.03rem, transparent 0.04rem);
+  background-size:
+    0.75rem 0.75rem,
+    1rem 1rem;
+  content: '';
+}
+
+button,
+a {
+  color: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+:focus-visible {
+  outline: 0.125rem solid var(--color-metal);
+  outline-offset: 0.25rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+html.is-loading {
+  overflow: hidden;
+}
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+
+/*
+ * Los campos de texto recuperan el cursor del sistema. Con el cursor
+ * escondido no se ve donde se esta escribiendo, y en el panel se escribe
+ * mucho.
+ */
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select {
+  cursor: auto !important;
+}
+
+/* Enlace de salto: invisible hasta que recibe el foco con el teclado. */
+.salto-contenido {
+  position: fixed;
+  z-index: 1100;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-metal);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transform: translateY(-200%);
+  transition: transform 160ms ease;
+}
+
+.salto-contenido:focus-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,21 @@
+@use '../panel';
+
+.tabla__enlace {
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-metal) 40%, transparent);
+}
+
+.tabla__enlace:hover {
+  border-bottom-color: var(--color-text);
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}

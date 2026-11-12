@@ -1,0 +1,12 @@
+@for (palabra of palabras(); track $index; let ultima = $last) {
+  <span class="palabra">
+    @for (letra of palabra; track $index) {
+      <span class="letra-mascara" [class.letra-mascara--suelta]="variante() === 'escalera'">
+        <span class="letra">{{ letra }}</span>
+      </span>
+    }
+  </span>
+  @if (!ultima) {
+    <span class="espacio">{{ ' ' }}</span>
+  }
+}

@@ -1,0 +1,5 @@
+<div class="indicador" aria-hidden="true">
+  @for (item of indices(); track item.clave) {
+    <span class="indicador__marca" [class.is-activa]="item.clave === activa()"></span>
+  }
+</div>

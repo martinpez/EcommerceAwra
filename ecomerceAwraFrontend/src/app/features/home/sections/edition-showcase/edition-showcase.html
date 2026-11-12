@@ -1,0 +1,30 @@
+<article #article class="edition-showcase" [class.edition-showcase--reverse]="reverse()">
+  <div class="edition-showcase__copy">
+    <p #copyItem class="edition-showcase__eyebrow">{{ edition().eyebrow }}</p>
+    <h2 #copyItem>{{ edition().title }}</h2>
+    @if (edition().etiqueta) {
+      <span #copyItem class="edition-showcase__badge">{{ edition().etiqueta }}</span>
+    }
+    <p #copyItem>{{ edition().description }}</p>
+    <a #copyItem [routerLink]="['/producto', edition().id]">Ver más detalles</a>
+  </div>
+
+  <div class="edition-showcase__product">
+    <div class="edition-showcase__halo" aria-hidden="true"></div>
+    @if (edition().back) {
+      <img
+        class="edition-showcase__image edition-showcase__image--back"
+        [src]="edition().back"
+        [alt]="edition().title + ' visto desde la espalda'"
+        decoding="async"
+      />
+    }
+    <img
+      #front
+      class="edition-showcase__image edition-showcase__image--front"
+      [src]="edition().front"
+      [alt]="edition().title + ' visto de frente'"
+      decoding="async"
+    />
+  </div>
+</article>

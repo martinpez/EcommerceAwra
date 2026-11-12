@@ -1,0 +1,293 @@
+<section class="panel">
+  <header class="panel__header">
+    <div>
+      <h1 class="panel__title">
+        {{ esNuevo() ? 'Nuevo producto' : 'Editar producto' }}
+      </h1>
+      <p class="panel__hint">
+        Para publicar hace falta al menos una talla y una foto. El stock se registra después, desde
+        Inventario, con movimientos: así queda el historial de cada entrada y cada venta.
+      </p>
+    </div>
+    <a class="boton" routerLink="/admin/productos">Volver al listado</a>
+  </header>
+
+  <app-panel-mensaje [error]="error()" [aviso]="aviso()" />
+
+  <div class="caja">
+    <h2 class="caja__title">Datos</h2>
+    <form class="formulario" [formGroup]="formulario" (ngSubmit)="guardar()">
+      <label class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <input type="text" formControlName="nombre" />
+        @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) {
+          <span class="campo__error">El nombre es obligatorio.</span>
+        }
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Precio (COP)</span>
+        <input type="number" formControlName="precio" min="0" step="100" />
+        @if (formulario.controls.precio.touched && formulario.controls.precio.invalid) {
+          <span class="campo__error">El precio debe ser mayor que cero.</span>
+        }
+      </label>
+
+      <label class="campo">
+        <span class="campo__etiqueta">Categoría</span>
+        <select formControlName="categoriaId">
+          <option [value]="0">Elige una categoría</option>
+          @for (categoria of categorias.value() ?? []; track categoria.id) {
+            <option [value]="categoria.id">{{ categoria.nombre }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="campo formulario--ancho">
+        <span class="campo__etiqueta">Descripción</span>
+        <textarea formControlName="descripcion" rows="4"></textarea>
+      </label>
+
+      <div class="formulario__acciones">
+        <button type="submit" class="boton boton--principal" [disabled]="guardando()">
+          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  @if (esNuevo()) {
+    <div class="caja">
+      <h2 class="caja__title">Tallas</h2>
+      <p class="panel__hint">
+        Cada talla es una variante con su propio stock. El SKU es único en todo el catálogo.
+      </p>
+
+      <ul class="lista">
+        @for (variante of nuevasVariantes(); track $index) {
+          <li class="lista__item">
+            <div class="variantes">
+              <input
+                type="text"
+                placeholder="Talla"
+                [value]="variante.talla"
+                (input)="actualizarVarianteNueva($index, 'talla', $any($event.target).value)"
+              />
+              <input
+                type="text"
+                placeholder="Color"
+                [value]="variante.color"
+                (input)="actualizarVarianteNueva($index, 'color', $any($event.target).value)"
+              />
+              <input
+                type="text"
+                placeholder="SKU"
+                [value]="variante.sku"
+                (input)="actualizarVarianteNueva($index, 'sku', $any($event.target).value)"
+              />
+              <input
+                type="number"
+                placeholder="Stock mínimo"
+                min="0"
+                [value]="variante.stockMinimo"
+                (input)="actualizarVarianteNueva($index, 'stockMinimo', $any($event.target).value)"
+              />
+            </div>
+            <div class="lista__acciones">
+              <button
+                type="button"
+                class="boton boton--mini boton--peligro"
+                (click)="quitarVariante($index)"
+              >
+                Quitar
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+
+      <div class="formulario__acciones">
+        <button type="button" class="boton boton--mini" (click)="anadirVariante()">
+          Añadir talla
+        </button>
+      </div>
+    </div>
+  } @else if (producto.hasValue() && producto.value(); as productoActual) {
+    <div class="caja">
+      <h2 class="caja__title">Tallas y stock</h2>
+      <p class="panel__hint">
+        Cada talla es una variante con su propio stock. La nueva talla nace con 0 unidades: las
+        entran después, desde Inventario, con un movimiento.
+      </p>
+
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Talla</th>
+            <th>Color</th>
+            <th>SKU</th>
+            <th>Stock</th>
+            <th>Mínimo</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (variante of productoActual.variantes; track variante.id) {
+            @if (editandoVariante() === variante.id) {
+              <tr>
+                <td colspan="6">
+                  <form
+                    class="variantes"
+                    [formGroup]="varianteFormulario"
+                    (ngSubmit)="guardarVariante(variante)"
+                  >
+                    <input type="text" formControlName="talla" />
+                    <input type="text" formControlName="color" />
+                    <input type="text" formControlName="sku" />
+                    <input type="number" formControlName="stockMinimo" min="0" />
+                    <button type="submit" class="boton boton--mini boton--principal">
+                      Guardar
+                    </button>
+                    <button
+                      type="button"
+                      class="boton boton--mini"
+                      (click)="cancelarEdicionVariante()"
+                    >
+                      Cancelar
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td>{{ variante.talla }}</td>
+                <td>{{ variante.color }}</td>
+                <td>{{ variante.sku }}</td>
+                <td>
+                  {{ variante.stock }}
+                  @if (variante.stock === 0) {
+                    <span class="insignia insignia--agotado">Sin stock</span>
+                  }
+                </td>
+                <td>{{ variante.stockMinimo }}</td>
+                <td>
+                  <div class="lista__acciones">
+                    <button
+                      type="button"
+                      class="boton boton--mini"
+                      (click)="editarVariante(variante)"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      class="boton boton--mini boton--peligro"
+                      (click)="eliminarVariante(variante)"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+
+      @if (anadiendoVariante()) {
+        <form
+          class="variantes variantes--nueva"
+          [formGroup]="nuevaVarianteFormulario"
+          (ngSubmit)="crearVariante()"
+        >
+          <input type="text" formControlName="talla" placeholder="Talla" />
+          <input type="text" formControlName="color" placeholder="Color" />
+          <input type="text" formControlName="sku" placeholder="SKU" />
+          <input type="number" formControlName="stockMinimo" min="0" placeholder="Stock mínimo" />
+          <button type="submit" class="boton boton--mini boton--principal">Añadir talla</button>
+          <button type="button" class="boton boton--mini" (click)="cancelarNuevaVariante()">
+            Cancelar
+          </button>
+        </form>
+      } @else {
+        <div class="formulario__acciones">
+          <button type="button" class="boton boton--mini" (click)="mostrarFormularioVariante()">
+            Añadir talla
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="caja">
+      <h2 class="caja__title">Fotos</h2>
+      <p class="panel__hint">
+        La primera foto es el frente del buzo y la segunda, la espalda: así se pintan en la Home y
+        en la ficha. La marcada como principal es la que sale en las tarjetas del catálogo.
+      </p>
+
+      <div class="formulario__acciones">
+        <input type="file" accept="image/*" (change)="elegirImagen($event)" />
+        <button
+          type="button"
+          class="boton boton--principal"
+          [disabled]="!nuevaImagen() || subiendo()"
+          (click)="subirImagen()"
+        >
+          {{ subiendo() ? 'Subiendo…' : 'Subir foto' }}
+        </button>
+      </div>
+
+      @if (imagenes.hasValue() && imagenes.value()!.length > 0) {
+        <ul class="lista">
+          @for (imagen of imagenes.value()!; track imagen.id) {
+            <li class="lista__item">
+              <img class="miniatura" [src]="imagen.url" [alt]="'Foto ' + imagen.orden" />
+              <div class="lista__datos">
+                <span class="lista__nombre">Orden {{ imagen.orden }}</span>
+                <span class="lista__meta">
+                  @if (imagen.principal) {
+                    <span class="insignia insignia--publicado">Principal</span>
+                  }
+                </span>
+              </div>
+              <div class="lista__acciones">
+                <button
+                  type="button"
+                  class="boton boton--mini"
+                  [disabled]="imagen.principal"
+                  (click)="marcarPrincipal(imagen.id)"
+                >
+                  Principal
+                </button>
+                <button
+                  type="button"
+                  class="boton boton--mini"
+                  [disabled]="imagen.orden === 1"
+                  (click)="moverImagen(imagen.id, imagen.orden - 1)"
+                >
+                  Subir
+                </button>
+                <button
+                  type="button"
+                  class="boton boton--mini"
+                  (click)="moverImagen(imagen.id, imagen.orden + 1)"
+                >
+                  Bajar
+                </button>
+                <button
+                  type="button"
+                  class="boton boton--mini boton--peligro"
+                  (click)="eliminarImagen(imagen.id)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="tabla__vacia">Este producto todavía no tiene fotos.</p>
+      }
+    </div>
+  }
+</section>

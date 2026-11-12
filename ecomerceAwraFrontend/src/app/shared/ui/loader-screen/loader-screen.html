@@ -1,0 +1,17 @@
+@if (visible()) {
+  <div #overlay class="loader" role="status" aria-label="Cargando AWRA">
+    <span #star class="loader__star">
+      <app-star-mark />
+    </span>
+
+    <p class="loader__wordmark" aria-hidden="true">
+      @for (letter of letters; track $index) {
+        <span class="loader__mask">
+          <span class="loader__letter">{{ letter }}</span>
+        </span>
+      }
+    </p>
+
+    <p class="loader__slogan" aria-hidden="true">{{ brand.slogan }}</p>
+  </div>
+}
