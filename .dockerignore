@@ -1,0 +1,29 @@
+# Artefactos de build
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Secretos: nunca entran al contexto de build
+.env
+.env.*
+!.env.example
+
+# Documentacion interna
+docs/
+AGENTS.md
+HELP.md
+
+# El frontend tiene su propio Dockerfile y su propio contexto
+ecomerceAwraFrontend/
+
+# IDE y sistema
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
+
+# Git
+.git/
+.gitignore
+.gitattributes

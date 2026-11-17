@@ -169,6 +169,73 @@ Flyway corre al arrancar con el perfil `oracle`. Los scripts viven en
 docker compose up -d # Oracle
 ```
 
+## Docker
+
+El `docker-compose.yml` levanta el stack completo: Oracle, la API y la web
+(nginx). Solo se publican la web y la base de datos; la API queda en la red
+interna de Docker.
+
+```bash
+docker-compose up -d --build     # primera vez (descarga Oracle, ~2.8 GB)
+docker-compose ps                # estado y salud de los tres servicios
+docker-compose logs -f backend
+docker-compose down              # baja los contenedores (conserva Oracle)
+docker-compose down -v           # baja y borra los datos de Oracle
+```
+
+> Si tienes el plugin de Compose v2, los mismos comandos funcionan como
+> `docker compose` (con espacio en vez de guion).
+
+| Servicio | Imagen | Puerto en el host | Tamaño |
+| --- | --- | --- | --- |
+| `frontend` | nginx + build Angular | `${PUERTO_WEB:-8088}` → 80 | ~95 MB |
+| `backend` | Spring Boot (perfil `oracle`) | interno, 8080 | ~603 MB |
+| `oracle` | `gvenzl/oracle-free:23-slim` | `127.0.0.1:1521` | ~2.8 GB |
+
+La web queda en `http://localhost:8088`. La primera vez Oracle tarda ~90 s en
+estar sano; el backend espera a ese healthcheck y nginx espera al backend. El
+arranque del backend, ya con Oracle sano, tarda ~11 s (Flyway valida las 4
+migraciones y el esquema queda en `AWRA_APP` versión 4). Con todo arriba, el
+consumo es de unos 2.5 GB de RAM (Oracle ~2 GB, backend ~440 MB, nginx ~12 MB).
+
+### Comprobar que quedó bien
+
+```bash
+curl -s -o /dev/null -w "SPA %{http_code}\n"  http://localhost:8088/
+curl -s -o /dev/null -w "API %{http_code}\n"  http://localhost:8088/api/publico/sitio
+curl -s -o /dev/null -w "401 %{http_code}\n"  http://localhost:8088/api/admin/productos
+```
+
+- `SPA 200`: nginx sirve Angular.
+- `API 200`: el proxy `/api` llega al backend y el backend habla con Oracle.
+- `admin 401`: la API está protegida y no se publica directamente.
+
+### Cómo se comunican la web y la API
+
+nginx sirve la SPA y hace de proxy de `/api` hacia `backend:8080`, así que el
+navegador ve un solo origen. Aun así el backend sigue validando el origen de lo
+que llega por el proxy (el puerto interno no coincide con el publicado), así
+que **`CORS_ORIGENES` debe incluir el origen real de la web**. Verificado: un
+origen que no está en la lista recibe `403`.
+
+Si cambias `PUERTO_WEB`, cambia también `CORS_ORIGENES`:
+
+```bash
+# .env
+PUERTO_WEB=80
+CORS_ORIGENES=https://awra.co,https://www.awra.co
+```
+
+Variables que afectan al stack (en `.env`):
+
+| Variable | Para qué | Valor por defecto |
+| --- | --- | --- |
+| `PUERTO_WEB` | Puerto del host donde se publica la web. | `8088` |
+| `CORS_ORIGENES` | Orígenes permitidos por la API. | `http://localhost:8088,http://127.0.0.1:8088` |
+
+El contenedor lee `.env` y `.env.jwt` (el segundo pisa al primero), así que
+necesita `JWT_SECRET`, `ADMIN_*` y `CLOUDINARY_*` reales para arrancar.
+
 ## Estructura
 
 ```

@@ -42,7 +42,7 @@ La URL de la API está en los archivos de entorno:
 | Archivo | Uso |
 | --- | --- |
 | `src/environments/environment.ts` | Desarrollo (`http://localhost:8080/api`) |
-| `src/environments/environment.production.ts` | Producción (`https://api.awra.co/api`) |
+| `src/environments/environment.production.ts` | Producción (`/api`, proxy de nginx) |
 
 El build de producción sustituye un archivo por otro (`fileReplacements` en
 `angular.json`), así que la URL real se cambia en un solo sitio.
@@ -80,6 +80,48 @@ npm run upload:media
 
 `scripts/.env` está en `.gitignore`: las credenciales nunca llegan al repositorio
 ni al bundle del navegador.
+
+## Docker
+
+El `Dockerfile` es multi-stage: compila la app con Node y la sirve con nginx.
+nginx atiende la SPA y hace de proxy de `/api` hacia el backend, así que el
+navegador ve un solo origen y no hay CORS.
+
+```bash
+docker build -t awra-frontend .
+docker run --rm -p 8088:80 awra-frontend
+```
+
+Normalmente se levanta junto con el backend y Oracle desde el compose del
+backend:
+
+```bash
+cd ..          # a ecomerceAwra/, donde está el docker-compose.yml
+docker-compose up -d --build
+```
+
+La web queda en `http://localhost:8088`. La URL de la API en producción es
+relativa (`/api`), por eso funciona igual en local y en el servidor.
+
+La imagen final pesa ~95 MB. El `application builder` de Angular emite la SPA
+en `dist/awra-public/browser/`, y eso es lo que se copia a nginx (no
+`dist/awra-public/`, que solo contiene la licencia de terceros).
+
+Detalles de `nginx.conf` que conviene conocer:
+
+- `client_max_body_size 55m`: el panel sube imágenes y videos de hasta 50 MB.
+- `try_files ... /index.html`: las rutas de Angular (`/admin/...`,
+  `/producto/...`) funcionan al recargar o entrar directo.
+- Los assets con hash se cachean un año (`Cache-Control: public, immutable`);
+  el `index.html` no se cachea.
+- `gzip` activo para JS, CSS, JSON y SVG.
+- El proxy pasa `$request_uri` y resuelve `backend` con el DNS de Docker en
+  cada petición, así que sigue funcionando si el contenedor del backend se
+  recrea con otra IP.
+
+El `HEALTHCHECK` usa `http://127.0.0.1/` y no `localhost`: dentro del
+contenedor, `localhost` resuelve primero a `::1` y nginx escucha solo en IPv4,
+así que con `localhost` el contenedor se quedaba en `starting`.
 
 ## Estructura
 

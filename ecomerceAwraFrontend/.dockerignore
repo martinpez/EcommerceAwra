@@ -1,0 +1,26 @@
+# Dependencias y build
+node_modules/
+dist/
+.angular/
+coverage/
+out-tsc/
+
+# Originales de medios (el sitio los sirve desde Cloudinary)
+media/
+
+# Documentacion interna
+docs/
+AGENTS.md
+
+# Credenciales
+.env
+.env.*
+scripts/.env
+scripts/.env.*
+
+# IDE y sistema
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db

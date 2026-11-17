@@ -1,3 +1,5 @@
+name: ecomerceawra
+
 services:
   oracle:
     image: gvenzl/oracle-free:23-slim
@@ -6,8 +8,9 @@ services:
       ORACLE_PASSWORD: ${ORACLE_PASSWORD}
       APP_USER: ${ORACLE_APP_USER}
       APP_USER_PASSWORD: ${ORACLE_APP_PASSWORD}
+    # Solo accesible desde el host (DBeaver, SQL Developer), no desde la red.
     ports:
-      - "1521:1521"
+      - "127.0.0.1:1521:1521"
     volumes:
       - oracle-data:/opt/oracle/oradata
     healthcheck:
@@ -15,7 +18,40 @@ services:
       interval: 10s
       timeout: 5s
       retries: 30
-      start_period: 30s
+      start_period: 60s
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: awra-backend
+    env_file:
+      - .env
+      - .env.jwt
+    environment:
+      SPRING_PROFILES_ACTIVE: oracle
+      ORACLE_URL: jdbc:oracle:thin:@//oracle:1521/FREEPDB1
+      CORS_ORIGENES: ${CORS_ORIGENES:-http://localhost:8088,http://127.0.0.1:8088}
+    # La API no se publica: solo se llega a ella por el proxy /api de nginx.
+    expose:
+      - "8080"
+    depends_on:
+      oracle:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./ecomerceAwraFrontend
+      dockerfile: Dockerfile
+    container_name: awra-frontend
+    ports:
+      - "${PUERTO_WEB:-8088}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   oracle-data:
