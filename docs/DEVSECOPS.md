@@ -84,3 +84,16 @@ deploy    → environment produccion              → compose pull + up -d + smo
       `docker compose ps` y memoria (14D).
 - [x] Este documento creado.
 - [ ] Confirmación explícita del usuario sobre las cuatro decisiones.
+
+## Cómo reproducir el CI en local
+
+```bash
+# Backend (desde la raíz del repo)
+./mvnw -B test
+
+# Frontend
+cd ecomerceAwraFrontend
+npm ci
+npm test -- --watch=false
+npm run build
+```
