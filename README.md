@@ -1,5 +1,7 @@
 # EcommerAwra — Backend
 
+[![CI](https://github.com/martinpez/EcommerceAwra/actions/workflows/ci.yml/badge.svg)](https://github.com/martinpez/EcommerceAwra/actions/workflows/ci.yml)
+
 API REST de la tienda AWRA. Spring Boot 4.1.2 · Java 21 · Spring Data JPA · Flyway · Oracle.
 
 La tienda pública y el panel de administración (Angular) viven en
